@@ -6,72 +6,71 @@ public class Primzahl {
         // INITIALISIERUNG 
 
         int obergrenze = 1000;
-        byte[] siebFeld = new byte[obergrenze + 1];
+        boolean[] siebFeld = new boolean[obergrenze + 1];
         
         // Alles mit 1 füllen
 
         int i = 0;
-        while (i <= obergrenze) 
+        while (i <= obergrenze) //alle auf 1 setzten
         {
-            siebFeld[i] = 1;
+            siebFeld[i] = true;
             i = i + 1;
         }
         
-        // 0 und 1 auf 0 setzten
-        siebFeld[0] = 0;
-        siebFeld[1] = 0;
+        
+        siebFeld[0] = false; // 0 und 1 auf 0 setzten
+        siebFeld[1] = false;
 
 
 
 
         // Sieb------------------------------------------------
 
-       
+        
 
         // Prüfen bis p * p > 1000 (wenn p = 31)
 
-        for ( int p = 2 ; p * p <= obergrenze; p++) 
+        for (int p = 2; p * p <= obergrenze; p++) 
         {
             
             // Wenn es eine Primzahl ist
-            if (siebFeld[p] == 1) 
+            if (siebFeld[p]) 
             {
                 
                 // Innere Schleife: Vielfache streichen (Start bei p * p)
 
                 
 
-                for (int streichIndex = p * p; streichIndex <= obergrenze; streichIndex + p) // alle Zahlen die durch p (außer p selbst) teilbar sind werden auf 0 gesetzt
+                for (int streichIndex = p * p; streichIndex <= obergrenze; streichIndex += p) // alle Zahlen die durch p (außer p selbst) teilbar sind werden auf 0 gesetzt
                 
                 {
-                    siebFeld[streichIndex] = 0;
+                    siebFeld[streichIndex] = false;
                     
-                  
+                   
                 }
 
             } 
             
             
-            
+           
         }
 
         // ABSPEICHERN ----------------------------------------------------------------------
         
-        short[] primzahlenListe = new short[obergrenze]; 
+        int[] primzahlenListe = new int[obergrenze / 2]; 
         int zielIndex = 0;
-        int j = 2; // Wir starten die Suche bei der 2
+         // Wir starten die Suche bei der 2
 
         // Das Feld durchsuchen und Primzahlen umkopieren
-        while (j <= obergrenze) 
-		{
-            if (siebFeld[j] == 1) 
+        for (int j = 2; j <= obergrenze; j++) 
+		{ 
+            if (siebFeld[j]) 
 			{
-                primzahlenListe[zielIndex] = (short) j;
+                primzahlenListe[zielIndex] = j;
 				
                 zielIndex = zielIndex + 1; // Platz in der neuen Liste eins weiterbewegen
             } 
             
-            j = j + 1; // Nächsten Index prüfen
         }
 		
 		
@@ -79,8 +78,10 @@ public class Primzahl {
 
         // --- AUSGABE ZUR KONTROLLE ---
         System.out.println("Gefundene Primzahlen: " + zielIndex);
-		for (int i = 0; i <= obergrenze; i++ )
+		
+		for (int a = 0; a < obergrenze /2 ; a++ )
 		{
-        System.out.println("Die ersten drei sind: " + primzahlenListe[i] + ", " ;}
+        System.out.print( primzahlenListe[a] + ", " );
+		}
     }
 }

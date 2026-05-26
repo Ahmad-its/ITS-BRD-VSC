@@ -16,7 +16,7 @@ mov r2, #0
 				;mov r3,#0
 ;
 ;until_Init	
-				;cmp r3,#1000
+				;cmp r3, #1000
 				;bgt enddo_Init
 ;
 ;do_Init		
@@ -32,8 +32,6 @@ mov r2, #0
 strb r2, [r0]
 strb r2, [r0, #1]
 
-
-
 ;Sieb:--------------------------------------------------------------------------
 
 
@@ -44,7 +42,7 @@ strb r2, [r0, #1]
 ;
 ;until_Sieb
 				;mul r4, r3, r3
-				;cmp r4,#1000
+				;cmp r4 #1000
 				;bgt enddo_Sieb
 ;
 ;do_Sieb
@@ -61,7 +59,7 @@ strb r2, [r0, #1]
 				;mov r6, r4
 				
 ;until_streichIndex			
-				;cmp r6,#1000
+				;cmp r6, #1000
 				;bgt enddo_streichIndex
 
 ;do_streichIndex
@@ -72,10 +70,8 @@ strb r2, [r0, #1]
 				;b until_streichIndex
 ;enddo_streichIndex
 				;b endif_Primzahl
-                
 ;endif_Primzahl
 				;b step_Sieb
-
 
 ;step_Sieb		
 				;add r3, #1
