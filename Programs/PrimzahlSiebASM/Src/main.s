@@ -115,10 +115,7 @@ step_Copy
 				add r3, r3, #1
 				b until_Copy
 
-enddo_Copy
-
-				
-
+enddo_Copy			
 forever         b   forever  
                 ENDP
                 END
