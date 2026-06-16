@@ -47,11 +47,17 @@ DEFAULT_BRIGHTNESS	DCW     800
 MY_TEXT				DCB		"Hold down different buttons from S0 to S7 and watch D8 to D15.", 0
 zustand				DCB		0
 
-txt_Init            DCB     "Init", 0
-txt_Runn   		    DCB     "Runn", 0
-txt_Hold			DCB		"Hold", 0
 
+zeit_init			DCB		"00:00:00", 0
+zeit				DCB		"00:00:00", 0
+zeit_alt			DCB		"  :  :  ", 0 
 
+TIME_10MIN			equ		60000000   ; 10 Min
+TIME_1MIN			equ		6000000   ; 1 Min
+TIME_1s				equ		1000000   ; 1 Min
+TIME_01s			equ		100000   ; 1 Min
+TIME_001s			equ		10000   ; 1 Min
+TIME_0001s			equ		1000   ; 1 Min
 ;********************************************
 ; Code section, aligned on 8-byte boundery
 ;********************************************
@@ -86,22 +92,42 @@ main	PROC
 		;LDR 	R0,=MY_TEXT
 		;BL  	lcdPrintS
 
-		mov		r0, #12
+		mov	r0, #10
 		mov		r1, #6
-		bl		lcdGotoXY
-
+		bl lcdGotoXY
 		
-		ldr		r0, =txt_Init
+		ldr		r0, =zeit_init
 		bl lcdPrintS
 superloop
-		
         
         BL      check_button                        ; Rückgabe in R0: 1 = gedrückt, 0 = nicht gedrückt
 
-    
-        BL      control_led                         ; Schaltet LED D8 ein oder aus
-
-		BL		update_display
+if_zustand
+			ldr		r0, =zustand
+			ldrb	r5, [r0]
+			cmp 	r5, #1
+			BEQ		then_Running
+			cmp 	r5, #2
+			BEQ		then_Hold
+			cmp 	r5, #3	
+			BEQ		then_Init	
+			b		else_zustand
+then_Init
+			;MOV     R0, R4 
+			bl		init
+			b		endif_zustand	
+then_Running
+			;MOV     R0, R4 
+			bl		run
+			b		endif_zustand
+then_Hold
+			;MOV     R0, R4 		
+			bl		hold
+			b		endif_zustand
+else_zustand
+			bl		init
+			b		endif_zustand
+endif_zustand
 
 	
 		BAL		superloop
@@ -110,7 +136,7 @@ superloop
 ; 1. FUNKTION: check_button
 ;*******************************************************************************
 check_button PROC
-        PUSH    {R0, r1, r2, r3, r4, LR}                           ; Sichert R1 und R2 auf dem Stack
+        PUSH    {R0, r1, r2, r3, r4, r5, LR}                           ; Sichert R1 und R2 auf dem Stack
 
 		ldr     r0, =GPIO_F_PIN						; Adresse der Taster-Hardware laden
         ldrh    r3, [R0]							; Tasterzustände einlesen
@@ -124,20 +150,27 @@ if_Check1
 then_Check1
 		MOV		r2, #1
 		strb	r2, [r1]
-		B       endif_Check3
+		B       btn_end
 endif_Check1
-;***************************************************
+
 if_Check2	
 		mov 	r4, #64
 		and		r4, r3
 		cmp 	r4, #0			
 		bne		endif_Check2
 then_Check2
+if_init_on
+		ldrb	r5, [r1]
+		cmp		r5, #1
+		bne		endif_Check2
+then_init_on			
 		MOV		r2, #2
+
 		strb	r2, [r1]
-		B       endif_Check3
+		B       btn_end
+endif_init_on
 endif_Check2
-;***************************************************
+
 if_Check3	
 		mov 	r4, #32
 		and		r4, r3
@@ -146,98 +179,190 @@ if_Check3
 then_Check3
 		MOV		r2, #3
 		strb	r2, [r1]
-		B       endif_Check3
+		B       btn_end
 endif_Check3
-
 btn_end
-        POP     {R0, r1, r2, r3, r4, LR}                            ; Register wiederherstellen
+        POP     {R0, r1, r2, r3, r4, r5, LR}                      ; Register wiederherstellen
         BX      LR                              ; Zurück zur Hauptschleife
         ENDP
+;*********************************************************
+init PROC
+		PUSH	{r0, r1, r2,r3, r4, r5, r6, LR}
+		
+		;LEDs steuern
+		LDR     r1, =GPIO_D_CLR
+		mov		r2, #3
+		strb	r2, [r1]
+		
+		mov		r0, #10
+		mov		r1, #6
+		bl		lcdGotoXY
+		
+		
+		ldr 	R1,=TIM2_ERG   			; Restart timer	
+		mov		R0,#0x01
+		strh	R0,[R1]					; Set UG Bit
 
-;*******************************************************************************
-; 2. FUNKTION control_led
-;*******************************************************************************
-control_led PROC
-        PUSH    {r0, r1, r2, r3, r4, LR}                            ; Sichert R2 und R3 auf dem Stack
+		;mov		r5, #0
+		;ldr		r0, =zustand
+		;strb	r5, [r0]
+		;ldr		r0, =zeit_init
+		;bl		lcdPrintS
 
-		ldr		r1, =zustand
-		ldrb	r0, [r1]                            
-		LDR     r3, =GPIO_D_SET                     ; Adresse fürs Einschalten laden
-		LDR     r4, =GPIO_D_CLR                     ; Adresse fürs Ausschalten laden
-        ;LSL     R2, r0                              ; Verschiebe die 1 an die gewünschte LED-Stelle 
+	
+for_rs
+				ldr		r3, =zeit
+				ldr		r4, =zeit_init
+				mov		r5, #0
+				
 
-if_led       
- 		CMP     r0, #1                              ; Soll die LED eingeschaltet werden?
-        BEQ     thenled_Running                             ; Wenn R0 == 1, springe zu led_on
-		CMP     r0, #2
-		BEQ     thenled_Hold
-		CMP     r0, #3
-		BEQ     thenled_Init
-		b 		endif_led
-thenled_Init
-		MOV     r2, #3
-        STRH    r2, [r4]                            ; Schreibt Bitmaske -> LED geht aus
-        B       endif_led
-thenled_Running
-		MOV     r2, #2 
-        STRH    r2, [r4]
-		MOV     r2, #1 
-        STRH    r2, [r3]
-		B       endif_led                            ; Schreibt Bitmaske -> LED geht an
-thenled_Hold
-		MOV     r2, #3
-        STRH    r2, [r3]                            ; Schreibt Bitmaske -> LED geht an
+until_rs		
+				cmp		r5, #8
+				BEQ		endfor_rs
+do_rs
+				ldrb	r6, [r4, r5]
+				strb	r6, [r3, r5]
 
-endif_led
-        POP     {r0, r1, r2, r3, r4, LR}                            ; Register wiederherstellen
-        BX      LR                                  ; Zurück zur Hauptschleife
+step_rs			
+				add		r5, r5, #1
+				B		until_rs
+endfor_rs
+
+		bl	print_Time
+
+		pop {r0, r1, r2, r3, r4, r5, r6, pc}
+		ENDP
+		
+		
+hold PROC
+		PUSH	{r0, r1, r2, r3, lr}
+		
+		
+		; LEDs steuern
+		LDR     r1, =GPIO_D_SET 
+		mov		r2, #3
+		strb	r2, [r1]
+		
+		;Display steuern
+		
+		bl		print_Time
+		
+		pop {r0, r1, r2, r3 , pc}
+		ENDP
+		
+run PROC
+
+		PUSH	{r0, r1, r2, lr}
+		
+		; LEDs steuern
+		LDR     r0, =GPIO_D_SET 
+		LDR     r1, =GPIO_D_CLR
+		mov		r2, #2
+		strb	r2, [r1]
+		mov		r2, #1
+		strb	r2, [r0]
+		
+		;Display steuern
+		;mov		r0, #10
+		;mov		r1, #6
+		;bl		lcdGotoXY
+		
+		bl		get_Time
+		bl		print_Time
+		
+		pop {r0, r1, r2, pc}
         ENDP
-;*******************************************************************************
-; 3. FUNKTION update_display
-;*******************************************************************************
-update_display PROC
 
-		PUSH	{r0, r1, r2, r3, r4, r5, LR}
-		ldr		r5, =zustand
-		mov		r3, #0
-if_Display	
-				ldrb	r2, [r5]
-				cmp r2, #1
-				BEQ	then_Running
-				cmp r2, #2
-				BEQ	then_Hold
-				cmp r2, #3	
-				BEQ	then_Init	
-				b	endif_Display
+get_Time PROC
 
-then_Init
-				mov		r0, #12
-				mov		r1, #6
-				bl		lcdGotoXY
-				ldr		r0, =txt_Init
-				bl lcdPrintS
-				strb	r3, [r5]
-				b	endif_Display
-then_Running
-				mov		r0, #12
-				mov		r1, #6
-				bl		lcdGotoXY
-				ldr		r0, =txt_Runn
-				bl lcdPrintS
-				strb	r3, [r5]
-				b	endif_Display 
-then_Hold		
-				mov		r0, #12
-				mov		r1, #6
-				bl		lcdGotoXY
-				ldr		r0, =txt_Hold
-				bl lcdPrintS
-				strb	r3, [r5]
-endif_Display
+		PUSH	{r0, r1, r2, r3, r4, r5, r6, r7,r8, LR}
 
-		POP		{r0, r1, r2, r3, r4, r5, PC}
-		;BX      LR                                  ; Zurück zur Hauptschleife
+	
+		ldr 	r0, =zeit
+
+		ldr     R1, =TIMER
+		ldr     R1, [R1]    
+
+		ldr		r2, = TIME_10MIN
+		udiv	r3, r1, r2
+		add 	r4, r3, #48
+		strb	r4, [r0, #0]
+		mul		r2, r2, r3
+		sub		r1, r1, r2
+
+		ldr		r2, = TIME_1MIN
+		udiv	r3, r1, r2
+		add 	r4, r3, #48
+		strb	r4, [r0, #1]
+		mul		r2, r2, r3
+		sub		r1, r1, r2
+
+		ldr		r2, = TIME_1s
+		udiv	r3, r1, r2
+		add 	r4, r3, #48
+		strb	r4, [r0, #3]
+		mul		r2, r2, r3
+		sub		r1, r1, r2
+
+		ldr		r2, = TIME_01s
+		udiv	r3, r1, r2
+		add 	r4, r3, #48
+		strb	r4, [r0, #4]
+		mul		r2, r2, r3
+		sub		r1, r1, r2
+
+		ldr		r2, = TIME_001s
+		udiv	r3, r1, r2
+		add 	r4, r3, #48
+		strb	r4, [r0, #6]
+		mul		r2, r2, r3
+		sub		r1, r1, r2
+
+		ldr		r2, = TIME_0001s
+		udiv	r3, r1, r2
+		add 	r4, r3, #48
+		strb	r4, [r0, #7]
+		mul		r2, r2, r3
+		sub		r1, r1, r2
+
+		
+
+		pop {r0, r1, r2, r3, r4, r5, r6,r7,r8,pc}
         ENDP
+;****************************	
+print_Time PROC
+		PUSH {r0, r2, r3, r4, r5, r6, r7, r8, LR}
+for_print
+			mov r5, #0
+until_print
+			cmp	r5, #8
+			BEQ	enddo_print
+	
+do_print
 
+if_gleich	ldr r8, = zeit
+			ldr r6, = zeit_alt
+			ldrb r2, [r8, r5]
+			ldrb r4, [r6, r5]
+			cmp r2, r4
+			BEQ done
+then_gleich
+			strb r2, [r6, r5]
+			add		r7, r5, #10
+			mov		r0, r7
+			mov		r1, #6
+			bl		lcdGotoXY
+
+			ldrb r0, [r8, r5]
+			bl	lcdPrintC	
+
+done
+
+step_print
+			add r5, r5, #1
+			B	until_print
+enddo_print
+		pop {r0, r2, r3, r4, r5, r6, r7, r8, pc}
+		ENDP
 		ALIGN
 		END
