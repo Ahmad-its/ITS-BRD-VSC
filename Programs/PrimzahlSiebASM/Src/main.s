@@ -1,5 +1,6 @@
+;Primzahl		
+				
 				AREA MyData, DATA, align = 2
-
 
 siebFeld		fill  1001    ; 1001 Bytes im speicher reservieren
 primzahlenListe	fill  2000
