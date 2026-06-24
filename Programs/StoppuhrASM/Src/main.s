@@ -6,7 +6,7 @@
 ;* Description        : Rahmen zur Loesung von GTP Woche 7-9 (Stoppuhr).
 ;
 ;*******************************************************************************
-
+;Stoppuhr.3
 ; Define address of selected GPIO and Timer registers
 PERIPH_BASE     	equ	0x40000000                 ;Peripheral base address
 AHB1PERIPH_BASE 	equ	(PERIPH_BASE + 0x00020000)
