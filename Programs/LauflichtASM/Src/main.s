@@ -13,7 +13,7 @@
     EXTERN GUI_init
     EXTERN TP_Init
     EXTERN delay
-        
+; Lauflicht.2        
 ; Define address of selected GPIO and Timer registers
 PERIPH_BASE         equ 0x40000000                 ;Peripheral base address
 AHB1PERIPH_BASE     equ (PERIPH_BASE + 0x00020000)
