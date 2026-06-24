@@ -175,7 +175,7 @@ ifinit_check
 thenhinit_run
 		mov		r2, #1
 	    strb 	r2, [r1]
-		bl superloop
+		
 endifinit_check
 
 		pop { r3, r4, r5, r6, pc}
@@ -213,12 +213,12 @@ ifhold_check
 thenhold_run
 	   mov		r2, #1
 	   strb 	r2, [r1]
-	   bl superloop
+	   b endifhold_check
 
 thenhold_init
 		mov		r2, #3
 	    strb 	r2, [r1]
-		bl superloop
+		
 
 endifhold_check
 		
@@ -259,20 +259,20 @@ ifrun_check
 thenrun_hold
 	  mov		r2, #2
 	  strb 		r2, [r1]
-	   bl superloop
+	   b endifrun_check
 
 thenrun_init
 		mov		r2, #3
 	    strb 	r2, [r1]
-		bl superloop
 		
+
 endifrun_check
 		
 		pop {r2, pc}
         ENDP
-
+;*********************************************************
 get_Time PROC
-
+;*********************************************************  
 		PUSH	{r0, r1, r2, r3, r4, r5, r6, r7,r8, LR}
 
 	
@@ -328,8 +328,9 @@ get_Time PROC
 		pop {r0, r1, r2, r3, r4, r5, r6,r7,r8,lr}
 		bx lr
         ENDP
-;****************************	
+;*********************************************************
 print_Time PROC
+;*********************************************************
 		PUSH {r2, r3, r4, r5, r6, r7, r8, LR}
 for_print
 			mov r5, #0
