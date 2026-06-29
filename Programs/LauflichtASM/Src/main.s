@@ -133,10 +133,10 @@ set_leds    PROC
             ; Schreibe das 16-Bit Muster aus R0 auf Port E und Port D
             LDR     r4, =GPIO_E_SET
 			LSR     R5, R0, #8
-            STRb    r5, [R4]
+            STRB    r5, [R4]
 
             LDR     r4, =GPIO_D_SET 
-            STRb    r0, [R4]
+            STRB    r0, [R4]
 
             POP     {R4, r5, r6, PC}
             ENDP
