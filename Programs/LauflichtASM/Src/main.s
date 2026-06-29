@@ -40,7 +40,7 @@ GPIO_E_CLR          equ (GPIOE_BASE + 0x1A)
 ; Data section, aligned on 4-byte boundery
 ;********************************************   
     AREA MyData, DATA, align = 2
-TestPattern DCW     0x8000, 0x7000, 0x5000, 0xab00
+TestPattern DCW     0x8000, 0x7000, 0x5000, 0xab00, 0xcccc
 
 ;********************************************
 ; Code section, aligned on 8-byte boundery
@@ -80,8 +80,6 @@ until
             beq     endfor          
 
 do          
-           
-            BL      clearAll
             
 			
             LDR     R6, =0xFFFF
@@ -131,13 +129,14 @@ set_leds    PROC
 ;*******************************************
             PUSH    {r4, r5, r6, LR}  
 
+            BL      clearAll
             ; Schreibe das 16-Bit Muster aus R0 auf Port E und Port D
             LDR     r4, =GPIO_E_SET
 			LSR     R5, R0, #8
-            STRH    r5, [R4]
+            STRb    r5, [R4]
 
             LDR     r4, =GPIO_D_SET 
-            STRH    r0, [R4]
+            STRb    r0, [R4]
 
             POP     {R4, r5, r6, PC}
             ENDP
@@ -152,7 +151,7 @@ main    PROC
         LDR     R7, =TestPattern
         MOV     R8, #0                  ; Laufindex Testpattern
 forever 
-        CMP     R8, #4
+        CMP     R8, #5
         MOVGE   R8, #0
         
         ; Test Lauflicht
@@ -164,6 +163,7 @@ forever
         BL      delay
 
         ADD     R8, #1
-		BAL     forever 
+		BAL     forever
+        ENDP 
         ALIGN
         END

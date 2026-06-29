@@ -1,6 +1,5 @@
 CompileFlags:
-  CompilationDatabase: >-
-    d:\HAW\GitProjekte\ITS-BRD-VSC\Programs\StoppuhrASM\out\StoppuhrASM\ITSboard_Assembly\Debug
+  CompilationDatabase: d:\HAW\GitProjekte\ITS-BRD-VSC\Programs\StoppuhrASM\out\StoppuhrASM\ITSboard_Assembly\Debug
   Add:
     - "-D_ILP32=1\r\n"
     - "-D_USE_STATIC_INLINE=1\r\n"
@@ -411,28 +410,17 @@ CompileFlags:
     - "-D__llvm__=1\r\n"
     - "-D__thumb2__=1\r\n"
     - "-D__thumb__=1\r\n"
-    - '-D__ARMCOMPILER_LIBCXX=1'
-    - '-ID:/HAW/GitProjekte/ITS-BRD-VSC/Programs/StoppuhrASM/Inc'
-    - >-
-      -ID:/HAW/GitProjekte/ITS-BRD-VSC/Programs/StoppuhrASM/../../stm32cubef4/Drivers/CMSIS/Device/ST/STM32F4xx/Include
-    - >-
-      -ID:/HAW/GitProjekte/ITS-BRD-VSC/Programs/StoppuhrASM/../../stm32cubef4/Drivers/CMSIS/Include
-    - >-
-      -ID:/HAW/GitProjekte/ITS-BRD-VSC/Programs/StoppuhrASM/../../stm32cubef4/Drivers/STM32F4xx_HAL_Driver/Inc
-    - >-
-      -ID:/HAW/GitProjekte/ITS-BRD-VSC/Programs/StoppuhrASM/../../stm32cubef4/Drivers/BSP/STM32F4xx_Nucleo_144
-    - >-
-      -ID:/HAW/GitProjekte/ITS-BRD-VSC/Programs/StoppuhrASM/../../stm32cubef4/Utilities/Fonts
-    - >-
-      -ID:/HAW/GitProjekte/ITS-BRD-VSC/Programs/StoppuhrASM/../../DisplayWaveshare/Inc
-    - >-
-      -ID:/HAW/GitProjekte/ITS-BRD-VSC/Programs/StoppuhrASM/../../ITS_BRD_LIB/Utilities/AddFonts
-    - >-
-      -ID:/HAW/GitProjekte/ITS-BRD-VSC/Programs/StoppuhrASM/tmp/StoppuhrASM.Debug+ITSboard_Assembly
-    - >-
-      -ID:/HAW/GitProjekte/ITS-BRD-VSC/Programs/StoppuhrASM/RTE/_Debug_ITSboard_Assembly
-    - '-IC:/Users/User/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include'
-    - >-
-      -IC:/Users/User/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.17.1/Drivers/CMSIS/Device/ST/STM32F4xx/Include
-    - >-
-      -ID:/HAW/GitProjekte/ITS-BRD-VSC/Programs/StoppuhrASM/../../ITS_BRD_LIB/Inc
+    - -D__ARMCOMPILER_LIBCXX=1
+    - -ID:/HAW/GitProjekte/ITS-BRD-VSC/Programs/StoppuhrASM/Inc
+    - -ID:/HAW/GitProjekte/ITS-BRD-VSC/Programs/StoppuhrASM/../../stm32cubef4/Drivers/CMSIS/Device/ST/STM32F4xx/Include
+    - -ID:/HAW/GitProjekte/ITS-BRD-VSC/Programs/StoppuhrASM/../../stm32cubef4/Drivers/CMSIS/Include
+    - -ID:/HAW/GitProjekte/ITS-BRD-VSC/Programs/StoppuhrASM/../../stm32cubef4/Drivers/STM32F4xx_HAL_Driver/Inc
+    - -ID:/HAW/GitProjekte/ITS-BRD-VSC/Programs/StoppuhrASM/../../stm32cubef4/Drivers/BSP/STM32F4xx_Nucleo_144
+    - -ID:/HAW/GitProjekte/ITS-BRD-VSC/Programs/StoppuhrASM/../../stm32cubef4/Utilities/Fonts
+    - -ID:/HAW/GitProjekte/ITS-BRD-VSC/Programs/StoppuhrASM/../../DisplayWaveshare/Inc
+    - -ID:/HAW/GitProjekte/ITS-BRD-VSC/Programs/StoppuhrASM/../../ITS_BRD_LIB/Utilities/AddFonts
+    - -ID:/HAW/GitProjekte/ITS-BRD-VSC/Programs/StoppuhrASM/tmp/StoppuhrASM.Debug+ITSboard_Assembly
+    - -ID:/HAW/GitProjekte/ITS-BRD-VSC/Programs/StoppuhrASM/RTE/_Debug_ITSboard_Assembly
+    - -IC:/Users/User/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include
+    - -IC:/Users/User/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.17.1/Drivers/CMSIS/Device/ST/STM32F4xx/Include
+    - -ID:/HAW/GitProjekte/ITS-BRD-VSC/Programs/StoppuhrASM/../../ITS_BRD_LIB/Inc
